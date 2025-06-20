@@ -1,4 +1,122 @@
-# Python
+# Document Intelligence Project .gitignore
+
+# =============================================================================
+# INPUT FILES AND DOCUMENTS
+# =============================================================================
+# Ignore all input files and document folders
+files/
+docs/
+documents/
+input/
+data/
+
+# =============================================================================
+# OUTPUT AND RESULT FOLDERS
+# =============================================================================
+# OCR and processing results
+json_result/
+txt_result/
+excel_results/
+temp_results/
+error_files/
+
+# Alternative result folder names
+results/
+output/
+processed/
+cache/
+cached_results/
+
+# =============================================================================
+# AZURE DOCUMENT INTELLIGENCE CACHE
+# =============================================================================
+# Cache files
+*.cache
+.cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# =============================================================================
+# EXCEL AND OFFICE FILES
+# =============================================================================
+# Excel output files
+*.xlsx
+*.xls
+*.xlsm
+~$*.xlsx
+~$*.xls
+.~lock.*
+
+# Word documents (if any are generated)
+*.docx
+*.doc
+~$*.docx
+~$*.doc
+
+# PowerPoint files
+*.pptx
+*.ppt
+~$*.pptx
+~$*.ppt
+
+# =============================================================================
+# JSON AND TEXT OUTPUT FILES
+# =============================================================================
+# OCR result files
+*_tables.json
+*_final_table.json
+*_ocr_results.txt
+*_reordered.json
+*_custom_order*.json
+*_clean_table_data.json
+*.json.bak
+*.txt.bak
+
+# =============================================================================
+# LOG FILES AND ERROR REPORTS
+# =============================================================================
+# Log files
+*.log
+*.error.txt
+error_*.txt
+processing_*.log
+batch_*.log
+
+# Debug files
+debug/
+logs/
+*.debug
+
+# =============================================================================
+# AZURE AND AUTHENTICATION
+# =============================================================================
+# Azure credentials and keys (IMPORTANT - never commit these!)
+.env
+.env.local
+.env.*.local
+azure_credentials.json
+service_key.json
+*.key
+*.pem
+*.p12
+
+# Azure CLI cache
+.azure/
+
+# =============================================================================
+# PYTHON ENVIRONMENT
+# =============================================================================
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.env/
+document_intelligence_env/
+
+# Python cache
 __pycache__/
 *.py[cod]
 *$py.class
@@ -19,40 +137,154 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 PYRECORDS
 
-# Virtual environments
-venv/
-env/
-ENV/
+# PyInstaller
+*.manifest
+*.spec
 
-# IDE
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# =============================================================================
+# JUPYTER NOTEBOOKS
+# =============================================================================
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*.ipynb
+
+# =============================================================================
+# IDE AND EDITOR FILES
+# =============================================================================
+# VSCode
 .vscode/
+*.code-workspace
+
+# PyCharm
 .idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
 *.swp
 *.swo
 *~
 
-# Output files
-*_final_table.json
-*_tables.json
-*_ocr_results.txt
-*_reordered.json
-*_custom_order*.json
-*_clean_table_data.json
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
 
-# Temporary files
+# =============================================================================
+# OPERATING SYSTEM FILES
+# =============================================================================
+# macOS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Linux
+*~
+
+# =============================================================================
+# TEMPORARY AND BACKUP FILES
+# =============================================================================
+# Temporary files
 *.tmp
 *.temp
+*.bak
+*.backup
+*.old
+*~
 
-# Logs
-*.log
+# Compressed files (unless specifically needed)
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tgz
 
-# Azure credentials (if using env files)
-.env
-.env.local
+# =============================================================================
+# PROJECT SPECIFIC
+# =============================================================================
+# Large files that shouldn't be in git
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.tif
+*.html
+*.htm
 
-# Sample PDFs (optional - remove if you want to include sample files)
-# *.pdf
+# Test files
+test_files/
+sample_files/
+examples/
+
+# Configuration overrides (keep template configs)
+config_local.json
+settings_local.json
+*_local.py
+
+# =============================================================================
+# WHAT TO KEEP (these will NOT be ignored)
+# =============================================================================
+# Keep these important files (use ! to negate ignore):
+!.gitignore
+!README.md
+!requirements.txt
+!*.py
+!column_mapping.json
+!config.json
+!setup.py
+!Dockerfile
+!docker-compose.yml
+!.github/
+!docs/README.md
+!examples/README.md
+
+# Keep template/example configs but not the actual ones
+!config_template.json
+!.env.example
 

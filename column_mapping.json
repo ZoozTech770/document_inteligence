@@ -1,0 +1,106 @@
+{
+  "ID": [
+    "Passport/ ID",
+    "מספר ת.ז",
+    "תז",
+    "ת״ז",
+    "ת. ז",
+    "I.D.",
+    "ID",
+    "Passport",
+    "ת.ז",
+    "מספר זהות",
+    "תעודת זהות",
+    "ת.ז."
+  ],
+  "First Name": [
+    "First Name",
+    "שם פרטי",
+    "שם מלא",
+    "First Name\n:selected:",
+    "שם",
+    "פרטי",
+    "Student Name"
+  ],
+  "Last Name": [
+    "Last Name",
+    "שם משפחה",
+    "משפחה",
+    "surname"
+  ],
+  "Employee Number": [
+    "מספר עובד. ת",
+    "מספר עובד",
+    "Employee ID",
+    "עובד"
+  ],
+  "Signature": [
+    "חתימה",
+    "Signature",
+    "Sign"
+  ],
+  "Title/Position": [
+    "Title\n(Position/ Job description)",
+    "Title",
+    "Position",
+    "Job",
+    "תפקיד"
+  ],
+  "Date of Birth": [
+    "DOB\n(mm/dd/yyyy)",
+    "DOB",
+    "Date of Birth",
+    "תאריך לידה"
+  ],
+  "Nationality": [
+    "Nationality",
+    "לאום",
+    "אזרחות"
+  ],
+  "Product Description": [
+    "תאור מוצר",
+    "Product",
+    "Description",
+    "מוצר"
+  ],
+  "Quantity": [
+    "כמות",
+    "Quantity",
+    "Amount"
+  ],
+  "Price": [
+    "מחיר ליחידה",
+    "סה״כ מחיר",
+    "Price",
+    "Total",
+    "מחיר"
+  ],
+  "Supply Date": [
+    "ת. אספקה",
+    "Supply Date",
+    "תאריך אספקה"
+  ],
+  "Row Number": [
+    "שורה",
+    "Row",
+    "Line",
+    "Index",
+    "מספר",
+    "#",
+    "Number"
+  ],
+  "Balance": [
+    "יתרה לאספקה",
+    "Balance",
+    "Remaining",
+    "יתרה"
+  ],
+  "Phone Number": [
+    "Phone",
+    "טלפון",
+    "נייד",
+    "Mobile",
+    "Phone Number",
+    "מספר טלפון"
+  ]
+}

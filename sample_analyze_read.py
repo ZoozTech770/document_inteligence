@@ -11,6 +11,13 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
 import numpy as np
 import json
+import warnings
+import hashlib
+from pathlib import Path
+import os
+
+# Suppress urllib3 SSL warnings for LibreSSL compatibility
+warnings.filterwarnings("ignore", message=".*urllib3 v2 only supports OpenSSL.*")
 
 """
 Remember to remove the key from your code when you're done, and never post it publicly. For production, use
@@ -19,6 +26,42 @@ https://docs.microsoft.com/en-us/azure/cognitive-services/cognitive-services-sec
 """
 endpoint = "https://hashomer-document-intelligence.cognitiveservices.azure.com/"
 key = "DrFp02cDQzsMqHKqM63BGiUTyEZkI4nEINW68tmPWGOCBmuUWTHoJQQJ99BFAC5RqLJXJ3w3AAALACOGgdu5"
+
+def create_result_folders():
+    """Create result folders if they don't exist"""
+    json_folder = Path("json_result")
+    txt_folder = Path("txt_result")
+    
+    json_folder.mkdir(exist_ok=True)
+    txt_folder.mkdir(exist_ok=True)
+    
+    return json_folder, txt_folder
+
+def get_file_hash(file_path):
+    """Generate a hash for the file to create unique identifier"""
+    hasher = hashlib.md5()
+    with open(file_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+def get_cached_results(file_path, json_folder, txt_folder):
+    """Check if we already have cached results for this file"""
+    base_name = Path(file_path).stem
+    file_hash = get_file_hash(file_path)
+    
+    # Look for existing files with this hash
+    json_pattern = f"{base_name}-{file_hash[:8]}_tables.json"
+    txt_pattern = f"{base_name}-{file_hash[:8]}_ocr_results.txt"
+    
+    json_file = json_folder / json_pattern
+    txt_file = txt_folder / txt_pattern
+    
+    if json_file.exists() and txt_file.exists():
+        print(f"Found cached results for {base_name} (hash: {file_hash[:8]})")
+        return json_file, txt_file, file_hash
+    
+    return None, None, file_hash
 
 def format_bounding_box(bounding_box):
     if not bounding_box:
@@ -68,21 +111,29 @@ def analyze_read(file_path=None, output_file=None, save_tables_json=False):
             )
         )
 
-        for line_idx, line in enumerate(page.lines):
-            add_output(
-                "...Line # {} has text content '{}' within bounding box '{}'".format(
-                    line_idx,
-                    line.content,
-                    format_bounding_box(line.polygon),
+        # Check if page.lines exists and is not None
+        if page.lines:
+            for line_idx, line in enumerate(page.lines):
+                add_output(
+                    "...Line # {} has text content '{}' within bounding box '{}'".format(
+                        line_idx,
+                        line.content,
+                        format_bounding_box(line.polygon),
+                    )
                 )
-            )
+        else:
+            add_output("...No lines found on this page")
 
-        for word in page.words:
-            add_output(
-                "...Word '{}' has a confidence of {}".format(
-                    word.content, word.confidence
+        # Check if page.words exists and is not None
+        if page.words:
+            for word in page.words:
+                add_output(
+                    "...Word '{}' has a confidence of {}".format(
+                        word.content, word.confidence
+                    )
                 )
-            )
+        else:
+            add_output("...No words found on this page")
 
     # Analyze tables if any are found
     tables_data = []
@@ -163,24 +214,80 @@ def analyze_read(file_path=None, output_file=None, save_tables_json=False):
 if __name__ == "__main__":
     import sys
     import os
+    import shutil
     
     # Check for --json flag
     save_json = '--json' in sys.argv
     if save_json:
         sys.argv.remove('--json')
     
+    # Create result folders
+    json_folder, txt_folder = create_result_folders()
+    
     if len(sys.argv) > 1:
         # Run with local PDF file
         pdf_file_path = sys.argv[1]
-        # Generate output filename based on input filename
         base_name = os.path.splitext(os.path.basename(pdf_file_path))[0]
-        output_file = f"{base_name}_ocr_results.txt"
         
-        print(f"Analyzing local PDF file: {pdf_file_path}")
-        print(f"Results will be saved to: {output_file}")
-        if save_json:
-            print(f"Tables will be saved as JSON")
-        analyze_read(pdf_file_path, output_file, save_json)
+        # Check for cached results first
+        cached_json, cached_txt, file_hash = get_cached_results(pdf_file_path, json_folder, txt_folder)
+        
+        if cached_json and cached_txt:
+            print(f"\n✅ Using cached results for {base_name}")
+            print(f"   JSON: {cached_json}")
+            print(f"   TXT: {cached_txt}")
+            
+            # Copy cached files to current directory for backward compatibility
+            current_json = f"{base_name}_tables.json"
+            current_txt = f"{base_name}_ocr_results.txt"
+            
+            shutil.copy2(cached_json, current_json)
+            shutil.copy2(cached_txt, current_txt)
+            
+            print(f"   Copied to: {current_json}")
+            print(f"   Copied to: {current_txt}")
+        else:
+            print(f"\n🔄 Processing new file: {base_name}")
+            
+            # Generate output filenames with hash for uniqueness
+            hash_suffix = file_hash[:8]
+            output_file = f"{base_name}_ocr_results.txt"
+            
+            print(f"Analyzing local file: {pdf_file_path}")
+            print(f"File hash: {file_hash[:8]}")
+            print(f"Results will be saved to organized folders")
+            
+            if save_json:
+                print(f"Tables will be saved as JSON")
+            
+            # Run OCR analysis
+            analyze_read(pdf_file_path, output_file, save_json)
+            
+            # Move results to organized folders
+            json_file = f"{base_name}_tables.json"
+            txt_file = f"{base_name}_ocr_results.txt"
+            
+            # Create unique filenames with hash
+            cached_json_name = f"{base_name}-{hash_suffix}_tables.json"
+            cached_txt_name = f"{base_name}-{hash_suffix}_ocr_results.txt"
+            
+            # Move files to result folders
+            if os.path.exists(json_file):
+                shutil.move(json_file, json_folder / cached_json_name)
+                print(f"📁 Moved JSON to: json_result/{cached_json_name}")
+                
+                # Create a copy in current directory for backward compatibility
+                shutil.copy2(json_folder / cached_json_name, json_file)
+            
+            if os.path.exists(txt_file):
+                shutil.move(txt_file, txt_folder / cached_txt_name)
+                print(f"📁 Moved TXT to: txt_result/{cached_txt_name}")
+                
+                # Create a copy in current directory for backward compatibility
+                shutil.copy2(txt_folder / cached_txt_name, txt_file)
+            
+            print(f"\n💾 Results cached for future use!")
+            
     else:
         # Run with sample URL document
         print("No file specified, using sample document from URL")

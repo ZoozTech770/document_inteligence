@@ -2,20 +2,41 @@
 
 🔥 **Advanced OCR + Table Extraction with Custom Column Ordering**
 
-A powerful CLI tool for extracting and processing tables from PDF documents using Azure Document Intelligence. Automatically reorders columns to put ID first, then names, with intelligent Hebrew and English text support.
+A powerful CLI tool for extracting and processing tables from PDF documents using Azure Document Intelligence. Supports both single file and batch processing with automatic column reordering and Excel output.
 
 ## ✨ Features
 
-- 🚀 **One-command processing**: PDF in → Clean JSON out
+- 🚀 **Batch processing**: Process multiple PDFs → Single Excel output
 - 📊 **Smart table extraction** with Azure Document Intelligence
 - 🔄 **Automatic column reordering**: ID → First Name → Last Name → Others
 - 🌍 **Multilingual support**: Hebrew and English text recognition
+- 📱 **Interactive file selection**: Choose which files to process
+- 📈 **Excel output**: Professional spreadsheet with source filenames
 - 🧹 **Auto cleanup**: No temporary files left behind
-- 📱 **Simple CLI**: Easy to use command-line interface
+- 📁 **Directory processing**: Handle subdirectories automatically
 
 ## 🚀 Quick Start
 
-### All-in-One Processing (Recommended)
+### 🆕 Batch Processing (Recommended for Multiple Files)
+```bash
+# 1. Setup files directory
+mkdir files
+cp *.pdf files/
+
+# 2. Run batch processor
+./batch_ocr.sh
+
+# 3. Select files interactively
+# 4. Get Excel output: ocr_results.xlsx
+```
+
+**Batch Options:**
+```bash
+./batch_ocr.sh -o custom_output.xlsx    # Custom filename
+./batch_ocr.sh --files-dir other_dir    # Different directory
+```
+
+### Single File Processing
 ```bash
 # Process any PDF document
 ./ocr_and_reorder.sh "your_document.pdf"
@@ -63,13 +84,13 @@ The system produces clean JSON with reordered columns:
 
 - Python 3.7+
 - Azure Document Intelligence credentials
-- Required packages: `azure-ai-documentintelligence`, `numpy`
+- Required packages: `azure-ai-documentintelligence`, `numpy`, `pandas`, `openpyxl`
 
 ## ⚙️ Setup
 
 1. **Install dependencies:**
    ```bash
-   pip3 install azure-ai-documentintelligence numpy
+   pip3 install azure-ai-documentintelligence numpy pandas openpyxl
    ```
 
 2. **Configure Azure credentials** in `sample_analyze_read.py`:
@@ -80,18 +101,22 @@ The system produces clean JSON with reordered columns:
 
 3. **Make scripts executable:**
    ```bash
-   chmod +x ocr_and_reorder.sh
+   chmod +x ocr_and_reorder.sh batch_ocr.sh
    ```
 
 ## 📁 Project Structure
 
 ```
 document_inteligence/
-├── sample_analyze_read.py    # Main OCR engine
-├── extract_final_table.py    # Table extraction & reordering
-├── ocr_and_reorder.sh       # All-in-one CLI script
-├── help.py                  # Help guide
-└── README.md               # This file
+├── sample_analyze_read.py     # Main OCR engine
+├── extract_final_table.py     # Table extraction & reordering
+├── batch_ocr_processor.py     # Batch processing engine
+├── ocr_and_reorder.sh        # Single file CLI script
+├── batch_ocr.sh              # Batch processing CLI script
+├── help.py                   # Help guide
+├── files/                    # Directory for PDF files (batch processing)
+├── .gitignore               # Git ignore rules
+└── README.md                # This file
 ```
 
 ## 🎯 Use Cases
